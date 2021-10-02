@@ -1,0 +1,11 @@
+--- a/configure
++++ b/configure
+@@ -9,7 +9,7 @@ VERSION=$(grep LIQ_VERSION_STRING libima
+ 
+ DEBUG=
+ QUIET=0
+-SSE=auto
++SSE=0
+ OPENMP=
+ EXTRA_CFLAGS=
+ EXTRA_LDFLAGS=
