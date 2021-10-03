@@ -53,13 +53,18 @@ make toolchain/install
 
 ## 3. Build Lomorage dependencies
 
-Add the source to feeds.conf,  OpenWRT/Entware are building from source directly. 
+Add the source to "feeds.conf",  OpenWRT/Entware are building from source directly. 
 
 ```
 src-git lomorage https://github.com/lomorage/openwrt-packages.git
 ```
 
-And then run `make package/symlinks` to pull the source.
+And then run following command to pull the source and link to package directory.
+
+```
+./scripts/feeds update -a
+./scripts/feeds install -a -f -p lomorage
+```
 
 Then you can use `make menuconfig` and choose the packages, and run following command to compile ufraw, you can use similar command to compile others:
 
