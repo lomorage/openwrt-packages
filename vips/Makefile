@@ -71,10 +71,10 @@ define Build/InstallDev
 	$(CP) $(PKG_INSTALL_DIR)/opt/include/vips/* $(1)/opt/include/vips
 
 	$(INSTALL_DIR) $(1)/opt/lib/
-	$(CP) $(PKG_INSTALL_DIR)/opt/lib/libvips.{a,so}* $(1)/opt/lib/
+	$(CP) $(PKG_INSTALL_DIR)/opt/lib/* $(1)/opt/lib/
 
 	$(INSTALL_DIR) $(1)/opt/lib/pkgconfig/
-	$(INSTALL_DATA) $(PKG_INSTALL_DIR)/opt/lib/pkgconfig/vips.pc $(1)/opt/lib/pkgconfig/vips.pc
+	$(INSTALL_DATA) $(PKG_INSTALL_DIR)/opt/lib/pkgconfig/* $(1)/opt/lib/pkgconfig/
 endef
 
 define Package/vips/install

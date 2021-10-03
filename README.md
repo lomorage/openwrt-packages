@@ -53,7 +53,7 @@ make toolchain/install
 
 ## 3. Build Lomorage dependencies
 
-Add the source to "feeds.conf",  OpenWRT/Entware are building from source directly. 
+Add the source to "feeds.conf" to the **beginning**,  OpenWRT/Entware are building from source directly. 
 
 ```
 src-git lomorage https://github.com/lomorage/openwrt-packages.git
