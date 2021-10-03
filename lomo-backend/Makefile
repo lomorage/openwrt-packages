@@ -9,7 +9,6 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=lomo-backend
-#PKG_VERSION:=
 PKG_RELEASE:=$(AUTORELEASE)
 
 PKG_SOURCE_PROTO:=git
@@ -17,7 +16,7 @@ PKG_SOURCE_URL:=git@bitbucket.org:lomoware/lomo-backend.git
 PKG_SOURCE_VERSION=7f56dc2cd6c0e21c92f59ac0f442fbf73e7ebfb6
 
 include $(INCLUDE_DIR)/package.mk
-include $(INCLUDE_DIR)/golang.mk
+include $(INCLUDE_DIR)/nls.mk
 
 ifeq ($(BUILD_VARIANT),nohf)
 GOARM=GOARM=5
@@ -25,6 +24,8 @@ endif
 
 define Package/lomo-backend/Default
 	$(call Package/gopackage/Default)
+	SECTION:=multimedia
+	CATEGORY:=Multimedia
 	TITLE:=Lomorage backend service
 	URL:=https://github.com/lomorage
 endef
@@ -46,11 +47,14 @@ endef
 
 Package/lomo-backend_nohf/description=$(Package/lomo-backend/description)
 
+TARGET_LDFLAGS += -lintl
+
 define Build/Compile
         (\
+                echo $(PKG_BUILD_DIR); \
                 cd $(PKG_BUILD_DIR); \
 		cd cmd/lomod; \
-		CGO_CFLAGS_ALLOW="-Xpreprocessor" CGO_ENABLED=1 GOOS=linux GOARCH=$(GOARCH) $(GOARM) GOPATH=$(PKG_BUILD_DIR) $(GOROOT)/bin/go build -mod=vendor -ldflags "-s -w -X bitbucket.org/lomoware/lomo-backend/common/release.Version=$$(git rev-parse --short=12 HEAD)" -tags "sqlite_trace trace"; \
+		CGO_CFLAGS_ALLOW="-Xpreprocessor" CGO_ENABLED=1 GOOS=linux GOARCH=$(GOARCH) $(GOARM) CC=$(TARGET_CC) GOMIPS=softfloat $(GOROOT)/bin/go build -mod=vendor -ldflags "-s -w -X bitbucket.org/lomoware/lomo-backend/common/release.Version=$$(git rev-parse --short=12 HEAD)" -tags "sqlite_trace trace"; \
 		cp lomod $(PKG_BUILD_DIR)/bin; \
 		chmod -R +w $(PKG_BUILD_DIR)/pkg; \
         )
