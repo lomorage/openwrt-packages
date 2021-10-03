@@ -66,6 +66,18 @@ And then run following command to pull the source and link to package directory.
 ./scripts/feeds install -a -f -p lomorage
 ```
 
+Make sure vips and libwebp is overriding the default in Entware:
+
+```
+./scripts/feeds uninstall vips
+./scripts/feeds install -p lomorage -f vips
+
+./scripts/feeds uninstall libwebp
+./scripts/feeds install -p lomorage -f libwebp
+```
+
+
+
 Then you can use `make menuconfig` and choose the packages, and run following command to compile ufraw, you can use similar command to compile others:
 
 ```
