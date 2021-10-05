@@ -28,7 +28,7 @@ define Package/lomo-backend/Default
 	CATEGORY:=Multimedia
 	TITLE:=Lomorage backend service
 	URL:=https://github.com/lomorage
-	DEPENDS:=+libstdcpp +libltdl +libresolv +libgio-2.0 $(INTL_DEPENDS)
+	DEPENDS:=+libstdcpp +libltdl +glib2 +vips $(INTL_DEPENDS)
 endef
 
 define Package/lomo-backend
