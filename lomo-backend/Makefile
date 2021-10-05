@@ -28,6 +28,7 @@ define Package/lomo-backend/Default
 	CATEGORY:=Multimedia
 	TITLE:=Lomorage backend service
 	URL:=https://github.com/lomorage
+	DEPENDS:=+libstdcpp +libltdl +libresolv +libgio-2.0 $(INTL_DEPENDS)
 endef
 
 define Package/lomo-backend
@@ -54,16 +55,14 @@ define Build/Compile
                 echo $(PKG_BUILD_DIR); \
                 cd $(PKG_BUILD_DIR); \
 		cd cmd/lomod; \
-		CGO_CFLAGS_ALLOW="-Xpreprocessor" CGO_ENABLED=1 GOOS=linux GOARCH=$(GOARCH) $(GOARM) CC=$(TARGET_CC) GOMIPS=softfloat $(GOROOT)/bin/go build -mod=vendor -ldflags "-s -w -X bitbucket.org/lomoware/lomo-backend/common/release.Version=$$(git rev-parse --short=12 HEAD)" -tags "sqlite_trace trace"; \
-		cp lomod $(PKG_BUILD_DIR)/bin; \
-		chmod -R +w $(PKG_BUILD_DIR)/pkg; \
+		GO111MODULE=auto CGO_CFLAGS_ALLOW="-Xpreprocessor" CGO_ENABLED=1 GOOS=linux GOARCH=$(GOARCH) $(GOARM) CC=$(TARGET_CC) CXX=$(TARGET_CXX) GOMIPS=softfloat $(GOROOT)/bin/go build -mod=vendor -ldflags "-s -w -v -X bitbucket.org/lomoware/lomo-backend/common/release.Version=$$(git rev-parse --short=12 HEAD)" -tags "sqlite_trace trace"; \
         )
 endef
 
 
 define Package/lomo-backend/install
 	$(INSTALL_DIR) $(1)/opt/bin
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/bin/lomod $(1)/opt/bin
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/cmd/lomod/lomod $(1)/opt/bin
 endef
 
 Package/lomo-backend_nohf/install=$(Package/lomo-backend/install)

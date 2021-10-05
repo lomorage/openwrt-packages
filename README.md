@@ -76,9 +76,7 @@ Make sure vips and libwebp is overriding the default in Entware:
 ./scripts/feeds install -p lomorage -f libwebp
 ```
 
-
-
-Then you can use `make menuconfig` and choose the packages, and run following command to compile ufraw, you can use similar command to compile others:
+Then you need **use `make menuconfig` and choose the packages**, and run following command to compile ufraw, you can use similar command to compile others:
 
 ```
 make -j5 package/ufraw/compile package/index V=s
@@ -93,3 +91,19 @@ ipkg install ./ufraw_0.22-0_mips-3.4.ipk
 ```
 
 Should notice that vips is already in openwrt/entware package (`feeds/packages/libs/vips`), but that need some patches to make it work, so you can change the vips there.
+
+## 4. Build lomod
+
+When compiling lomod, lots for warnings like "cc1: note: someone does not honour COPTS correctly, passed 0 times", and finally fails in the link stage and complains can't find "libintl".
+
+Since cgo will override the cflags ldflags, and "libintl" has no "pc" file so the path is actually hardcoded in openwrt(see `include/nls.mk`), and "libintl" is not in "staging_dir/target-mips_mips32r2_glibc-2.27/opt/lib" which is the output of `pkg-config --cflags --libs vips` in cross compile env. Same applies for "libiconv".
+
+One workaround is to copy the files needed:
+
+```
+cp -r staging_dir/target-mips_mips32r2_glibc-2.27/opt/lib/libintl-full/lib/* staging_dir/target-mips_mips32r2_glibc-2.27/opt/lib/
+
+cp -r staging_dir/target-mips_mips32r2_glibc-2.27/opt/lib/libiconv-full/lib/* staging_dir/target-mips_mips32r2_glibc-2.27/opt/lib/
+```
+
+Then run `make -j5 package/lomo-backend/compile package/index V=s` .
