@@ -109,13 +109,22 @@ On router, install dependencies and tools from Entware repo:
 opkg install coreutils-stat perl-image-exiftool ffmpeg ffprobe lsblk
 ```
 
-copy those ipk files build in above steps from host to router to one directory, say "/mnt/sda1/lomorage".
+Create tarball for all ipk files in above steps by running below command. `mips-3.4` is the architecture for your router. It is armv7-3.2 by default if not given
+```
+./mk_tarball.sh mips-3.4
+```
+
+A new tarball file `release-lomod_mips-3.4.tar.gz` is created. Copy this tarball from host to router to one directory, say "/mnt/sda1/lomorage", and untar it. Now you should get these files
 
 ```
 root@OpenWrt:/mnt/sda1/lomorage# ls
-Packages.gz                           libheif_1.12.0-0_mips-3.4.ipk         lomo-backend_7f56dc2c-1_mips-3.4.ipk  vips_8.10.6-1_mips-3.4.ipk
-Packages.stamps                       libimagequant_2.16.0-0_mips-3.4.ipk   orc_0.4.29-0_mips-3.4.ipk             vips_8.11.4-1_mips-3.4.ipk
-libde265_1.0.8-0_mips-3.4.ipk         libwebp_1.2.0-3_mips-3.4.ipk 
+libde265_1.0.8-0_mips-3.4.ipk
+libheif_1.12.0-0_mips-3.4.ipk
+libimagequant_2.16.0-0_mips-3.4.ipk
+libwebp_1.2.0-3_mips-3.4.ipk
+lomo-backend_7f56dc2c-1_mips-3.4.ipk
+orc_0.4.29-0_mips-3.4.ipk
+vips_8.11.4-1_mips-3.4.ipk
 ```
 
 Then we need opkg-utils to create repo:

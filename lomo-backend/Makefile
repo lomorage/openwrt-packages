@@ -18,9 +18,9 @@ PKG_SOURCE_VERSION=7f56dc2cd6c0e21c92f59ac0f442fbf73e7ebfb6
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/nls.mk
 
-#ifeq ($(BUILD_VARIANT),nohf)
-#GOARM=GOARM=5
-#endif
+ifeq ($(BUILD_VARIANT),nohf)
+GOARM=GOARM=5
+endif
 
 define Package/lomo-backend/Default
 	$(call Package/gopackage/Default)
