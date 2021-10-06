@@ -18,9 +18,9 @@ PKG_SOURCE_VERSION=7f56dc2cd6c0e21c92f59ac0f442fbf73e7ebfb6
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/nls.mk
 
-ifeq ($(BUILD_VARIANT),nohf)
-GOARM=GOARM=5
-endif
+#ifeq ($(BUILD_VARIANT),nohf)
+#GOARM=GOARM=5
+#endif
 
 define Package/lomo-backend/Default
 	$(call Package/gopackage/Default)
@@ -39,7 +39,7 @@ endef
 define Package/lomo-backend_nohf
 	$(call Package/lomo-backend/Default)
 	VARIANT:=nohf
-	DEPENDS:=@(TARGET_armv7_2_6||TARGET_armv7_3_2)
+	#DEPENDS:=@(TARGET_armv7_2_6||TARGET_armv7_3_2)
 endef
 
 define Package/lomo-backend/description
@@ -55,7 +55,7 @@ define Build/Compile
                 echo $(PKG_BUILD_DIR); \
                 cd $(PKG_BUILD_DIR); \
 		cd cmd/lomod; \
-		GO111MODULE=auto CGO_CFLAGS_ALLOW="-Xpreprocessor" CGO_ENABLED=1 GOOS=linux GOARCH=$(GOARCH) $(GOARM) CC=$(TARGET_CC) CXX=$(TARGET_CXX) GOMIPS=softfloat $(GOROOT)/bin/go build -mod=vendor -ldflags "-s -w -v -X bitbucket.org/lomoware/lomo-backend/common/release.Version=$$(git rev-parse --short=12 HEAD)" -tags "sqlite_trace trace"; \
+		GO111MODULE=auto CGO_CFLAGS_ALLOW="-Xpreprocessor" CGO_ENABLED=1 GOOS=linux GOARCH=$(GOARCH) $(GOARM) CC=$(TARGET_CC) CXX=$(TARGET_CXX) GOMIPS=softfloat $(GOROOT)/bin/go build -mod=vendor -ldflags "-s -w -v -X bitbucket.org/lomoware/lomo-backend/common/release.Version=$$(git rev-parse --short=12 HEAD) -extldflags \"$(TARGET_LDFLAGS)\"" -tags "sqlite_trace trace"; \
         )
 endef
 

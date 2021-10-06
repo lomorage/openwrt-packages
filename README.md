@@ -39,6 +39,11 @@ root@OpenWrt:/mnt/sda1# lscpu | grep "Byte Order"
 Byte Order:          Big Endian
 ```
 
+Most likely you need mount USB drive and use that for packages installation, refer to:
+
+1. https://openwrt.org/docs/guide-user/storage/usb-drives-quickstart#procedure
+2. https://www.jianshu.com/p/4061eeaccd13
+
 ## 2.  Prepare Entware on host
 
 Entware uses the same infrastructure as OpenWRT to build.
@@ -51,7 +56,7 @@ Follow the instruction https://github.com/Entware/Entware/wiki/Compile-packages-
 make toolchain/install
 ```
 
-## 3. Build Lomorage dependencies
+## 3. Build Lomorage dependencies on host
 
 Add the source to "feeds.conf" to the **beginning**,  OpenWRT/Entware are building from source directly. 
 
@@ -92,18 +97,60 @@ ipkg install ./ufraw_0.22-0_mips-3.4.ipk
 
 Should notice that vips is already in openwrt/entware package (`feeds/packages/libs/vips`), but that need some patches to make it work, so you can change the vips there.
 
-## 4. Build lomod
+## 4. Build lomod on host
 
-When compiling lomod, lots for warnings like "cc1: note: someone does not honour COPTS correctly, passed 0 times", and finally fails in the link stage and complains can't find "libintl".
+Just run `make -j5 package/lomo-backend/compile package/index V=s` . For "arm" architecture, it will generate "hf" and "nohf" versions, and "hf" means hard float, you can check whether the CPU supports hard float by `grep "fpu" /proc/cpuinfo` and if it shows `fpu     : yes` then it supports hard float.
 
-Since cgo will override the cflags ldflags, and "libintl" has no "pc" file so the path is actually hardcoded in openwrt(see `include/nls.mk`), and "libintl" is not in "staging_dir/target-mips_mips32r2_glibc-2.27/opt/lib" which is the output of `pkg-config --cflags --libs vips` in cross compile env. Same applies for "libiconv".
+## 5. Installation on router
 
-One workaround is to copy the files needed:
+On router, install dependencies and tools from Entware repo:
 
 ```
-cp -r staging_dir/target-mips_mips32r2_glibc-2.27/opt/lib/libintl-full/lib/* staging_dir/target-mips_mips32r2_glibc-2.27/opt/lib/
-
-cp -r staging_dir/target-mips_mips32r2_glibc-2.27/opt/lib/libiconv-full/lib/* staging_dir/target-mips_mips32r2_glibc-2.27/opt/lib/
+opkg install coreutils-stat perl-image-exiftool ffmpeg ffprobe lsblk
 ```
 
-Then run `make -j5 package/lomo-backend/compile package/index V=s` .
+copy those ipk files build in above steps from host to router to one directory, say "/mnt/sda1/lomorage".
+
+```
+root@OpenWrt:/mnt/sda1/lomorage# ls
+Packages.gz                           libheif_1.12.0-0_mips-3.4.ipk         lomo-backend_7f56dc2c-1_mips-3.4.ipk  vips_8.10.6-1_mips-3.4.ipk
+Packages.stamps                       libimagequant_2.16.0-0_mips-3.4.ipk   orc_0.4.29-0_mips-3.4.ipk             vips_8.11.4-1_mips-3.4.ipk
+libde265_1.0.8-0_mips-3.4.ipk         libwebp_1.2.0-3_mips-3.4.ipk 
+```
+
+Then we need opkg-utils to create repo:
+
+```
+root@OpenWrt:/mnt/sda1/# git clone git://git.yoctoproject.org/opkg-utils
+# you can update /etc/profile as well
+root@OpenWrt:/mnt/sda1/# export PATH="/mnt/sda1/opkg-utils:$PATH"
+root@OpenWrt:/mnt/sda1/# cd /mnt/sda1/lomorage
+root@OpenWrt:/mnt/sda1/lomorage# opkg install python3
+root@OpenWrt:/mnt/sda1/lomorage# opkg-make-index . > Packages
+```
+
+Then add `src/gz local file:///mnt/sda1/lomorage` in "/opt/etc/opkg.conf",  right after the "entware" entry as below:
+
+```
+src/gz entware http://bin.entware.net/mipssf-k3.4
+src/gz local file:///mnt/sda1/lomorage
+dest root /
+lists_dir ext /opt/var/opkg-lists
+arch all 100
+arch mips-3x 150
+arch mips-3.4 160
+```
+
+and then you can install "lomo-backend", all the dependencies should be installed automatically:
+
+```
+root@OpenWrt:/mnt/sda1/# opkg update
+root@OpenWrt:/mnt/sda1/# opkg install lomo-backend
+```
+
+Then you can run lomod:
+
+```
+GOGC=50 lomod --mount-dir /mnt
+```
+
