@@ -44,6 +44,8 @@ Most likely you need mount USB drive and use that for packages installation, ref
 1. https://openwrt.org/docs/guide-user/storage/usb-drives-quickstart#procedure
 2. https://www.jianshu.com/p/4061eeaccd13
 
+**Make sure you change "/etc/profile" and add `/opt/bin/go/bin:/opt/bin` in `PATH` and `/opt/lib/` in `LD_LIBRARY_PATH`**
+
 ## 2.  Prepare Entware on host
 
 Entware uses the same infrastructure as OpenWRT to build.
@@ -81,43 +83,42 @@ Make sure vips and libwebp is overriding the default in Entware:
 ./scripts/feeds install -p lomorage -f libwebp
 ```
 
-Then you need **use `make menuconfig` and choose the packages**, and run following command to compile ufraw, you can use similar command to compile others:
-
-```
-make -j5 package/ufraw/compile package/index V=s
-```
-
-The "ipk" package is generated in `bin/targets/mips-3.4/generic-glibc/packages/` if arch is mips.
-
-And then you can copy the packages to openwrt router and install with:
-
-```
-ipkg install ./ufraw_0.22-0_mips-3.4.ipk
-```
-
-Should notice that vips is already in openwrt/entware package (`feeds/packages/libs/vips`), but that need some patches to make it work, so you can change the vips there.
-
 ## 4. Build lomod on host
 
-Just run `make -j5 package/lomo-backend/compile package/index V=s` . For "arm" architecture, it will generate "hf" and "nohf" versions, and "hf" means hard float, you can check whether the CPU supports hard float by `grep "fpu" /proc/cpuinfo` and if it shows `fpu     : yes` then it supports hard float.
-
-## 5. Installation on router
-
-On router, install dependencies and tools from Entware repo:
+Create soft link for `mk_tarball.sh` and `buid_lomod.sh`
 
 ```
-opkg install coreutils-stat perl-image-exiftool ffmpeg ffprobe lsblk
+ln -s feeds/lomorage/mk_tarball.sh mk_tarball.sh
+ln -s feeds/lomorage/build_lomod.sh build_lomod.sh
 ```
+Build lomod, `mips-3.4` is the architecture for your router:
+
+```
+./build_lomod.sh mips-3.4
+```
+
+For "arm" architecture, it will generate "hf" and "nohf" versions, and "hf" means hard float, you can check whether the CPU supports hard float by `grep "fpu" /proc/cpuinfo` and if it shows `fpu     : yes` then it supports hard float.
 
 Create tarball for all ipk files in above steps by running below command. `mips-3.4` is the architecture for your router. It is armv7-3.2 by default if not given
 ```
 ./mk_tarball.sh mips-3.4
 ```
 
-A new tarball file `release-lomod_mips-3.4.tar.gz` is created. Copy this tarball from host to router to one directory, say "/mnt/sda1/lomorage", and untar it. Now you should get these files
+A new tarball file `release-lomod_mips-3.4.tar.gz` is created. Copy this tarball from host to router to one directory, say "/mnt/sda1/lomorage", and untar it. 
+
+## 5. Installation on router
+
+On router, install dependencies and tools from Entware repo:
+
+```
+root@OpenWrt:~# opkg install coreutils-stat perl-image-exiftool ffmpeg ffprobe lsblk
+```
+
+Now you should get these files
 
 ```
 root@OpenWrt:/mnt/sda1/lomorage# ls
+fftw_3.3.10-1_mips-3.4.ipk
 libde265_1.0.8-0_mips-3.4.ipk
 libheif_1.12.0-0_mips-3.4.ipk
 libimagequant_2.16.0-0_mips-3.4.ipk
@@ -163,3 +164,16 @@ Then you can run lomod:
 GOGC=50 lomod --mount-dir /mnt
 ```
 
+## References:
+
+https://openwrt.org/docs/guide-developer/helloworld/start
+
+https://forum.archive.openwrt.org/viewtopic.php?id=6809&p=1#p31794
+
+https://openwrt.org/docs/guide-developer/build-system/use-buildsystem
+
+https://openwrt.org/docs/guide-developer/build-system/use-patches-with-buildsystem
+
+https://github.com/Entware/entware-go
+
+https://openwrt.org/docs/guide-user/additional-software/opkg
