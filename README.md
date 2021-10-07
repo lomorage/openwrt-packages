@@ -158,10 +158,11 @@ root@OpenWrt:/mnt/sda1/# opkg update
 root@OpenWrt:/mnt/sda1/# opkg install lomo-backend
 ```
 
-Then you can run lomod:
+Lomod will start automatically after installation, you can also run:
 
 ```
-GOGC=50 lomod --mount-dir /mnt
+root@OpenWrt:/mnt/sda1# /opt/etc/init.d/lomod
+Usage: /opt/etc/init.d/lomod {start|stop|restart}
 ```
 
 ## References:
