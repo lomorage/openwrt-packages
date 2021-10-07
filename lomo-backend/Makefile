@@ -59,10 +59,31 @@ define Build/Compile
         )
 endef
 
+define Package/lomo-backend/postinst
+#!/bin/sh
+# check if we are on real system
+if [ -z "$${IPKG_INSTROOT}" ]; then
+        echo "start lomod service"
+        /opt/etc/init.d/lomod start
+fi
+exit 0
+endef
+
+define Package/lomo-backend/prerm
+#!/bin/sh
+# check if we are on real system
+if [ -z "$${IPKG_INSTROOT}" ]; then
+        echo "stop lomod service"
+        /opt/etc/init.d/lomod stop
+fi
+exit 0
+endef
 
 define Package/lomo-backend/install
 	$(INSTALL_DIR) $(1)/opt/bin
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/cmd/lomod/lomod $(1)/opt/bin
+	$(INSTALL_DIR) $(1)/opt/etc/init.d
+	$(INSTALL_BIN) ./files/lomod $(1)/opt/etc/init.d
 endef
 
 Package/lomo-backend_nohf/install=$(Package/lomo-backend/install)
