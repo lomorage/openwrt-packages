@@ -178,3 +178,7 @@ https://openwrt.org/docs/guide-developer/build-system/use-patches-with-buildsyst
 https://github.com/Entware/entware-go
 
 https://openwrt.org/docs/guide-user/additional-software/opkg
+
+https://gist.github.com/bewest/3808646#packaging-a-service-for-openwrt
+
+https://github.com/mwarning/openwrt-examples/blob/master/README.md
