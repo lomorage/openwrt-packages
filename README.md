@@ -1,11 +1,14 @@
-# openwrt-packages
-Lomorage openwrt dependencies.
+# Lomorage opkg packages
 
-Assume you already have openwrt installed on router.
+Lomorage setup using opkg packages with Entware repository (need dependencies in Entware, like ffmpeg exif-tools).
 
-## 1. Install Entware on router
+## Quick Start
 
-Follow the instruction at https://github.com/Entware/Entware/wiki/Alternative-install-vs-standard to install Entware on router.
+This is for users who want to setup Lomorage using opkg packets.
+
+### 1. Install Entware
+
+Follow the instruction at https://github.com/Entware/Entware/wiki/Alternative-install-vs-standard to install Entware on target machine.
 
 You can use `cat /proc/cpuinfo` to check the architecture:
 
@@ -46,7 +49,47 @@ Most likely you need mount USB drive and use that for packages installation, ref
 
 **Make sure you change "/etc/profile" and add `/opt/bin/go/bin:/opt/bin` in `PATH` and `/opt/lib/` in `LD_LIBRARY_PATH`**
 
-## 2.  Prepare Entware on host
+Once you have Entware setup ready, install dependencies and tools from Entware repo:
+
+```
+root@OpenWrt:~# opkg install coreutils-stat perl-image-exiftool ffmpeg ffprobe lsblk
+```
+
+### 2. Install Lomorage
+
+Add `src/gz lomorage https://lomostaging.lomorage.com/opkg` in `/opt/etc/opkg.conf`. This should **below "entware" entry** because some packages in entware are not compiled with needed flags, and need to be overrided.
+
+```
+root@OpenWrt:~# cat /opt/etc/opkg.conf
+src/gz entware http://bin.entware.net/mipssf-k3.4
+#src/gz local file:///mnt/sda1/lomorage
+src/gz lomorage https://lomostaging.lomorage.com/opkg
+dest root /
+lists_dir ext /opt/var/opkg-lists
+arch all 100
+arch mips-3x 150
+arch mips-3.4 160
+```
+
+And then you can install "lomo-backend", all the dependencies should be able to be installed automatically:
+
+```
+root@OpenWrt:/mnt/sda1/# opkg update
+root@OpenWrt:/mnt/sda1/# opkg install lomo-backend
+```
+
+Lomod will start automatically after installation, you can also run:
+
+```
+root@OpenWrt:/mnt/sda1# /opt/etc/init.d/lomod
+Usage: /opt/etc/init.d/lomod {start|stop|restart}
+```
+
+## Developement
+
+This is for developers to compile opkg packages.
+
+### 1.  Prepare Entware on host
 
 Entware uses the same infrastructure as OpenWRT to build.
 
@@ -58,7 +101,7 @@ Follow the instruction https://github.com/Entware/Entware/wiki/Compile-packages-
 make toolchain/install
 ```
 
-## 3. Build Lomorage dependencies on host
+### 2. Build Lomorage dependencies on host
 
 Add the source to "feeds.conf" to the **beginning**,  OpenWRT/Entware are building from source directly. 
 
@@ -83,13 +126,14 @@ Make sure vips and libwebp is overriding the default in Entware:
 ./scripts/feeds install -p lomorage -f libwebp
 ```
 
-## 4. Build lomod on host
+### 3. Build lomod on host
 
 Create soft link for `mk_tarball.sh` and `buid_lomod.sh`
 
 ```
 ln -s feeds/lomorage/mk_tarball.sh mk_tarball.sh
 ln -s feeds/lomorage/build_lomod.sh build_lomod.sh
+ln -s feeds/lomorage/release_lomod.sh release_lomod.sh
 ```
 Build lomod, `mips-3.4` is the architecture for your router:
 
@@ -100,19 +144,27 @@ Build lomod, `mips-3.4` is the architecture for your router:
 For "arm" architecture, it will generate "hf" and "nohf" versions, and "hf" means hard float, you can check whether the CPU supports hard float by `grep "fpu" /proc/cpuinfo` and if it shows `fpu     : yes` then it supports hard float.
 
 Create tarball for all ipk files in above steps by running below command. `mips-3.4` is the architecture for your router. It is armv7-3.2 by default if not given
+
 ```
 ./mk_tarball.sh mips-3.4
 ```
 
 A new tarball file `release-lomod_mips-3.4.tar.gz` is created. Copy this tarball from host to router to one directory, say "/mnt/sda1/lomorage", and untar it. 
 
-## 5. Installation on router
-
-On router, install dependencies and tools from Entware repo:
+You can also use "release_lomod.sh" to generate opkg package repository, it will gather ipkg files in all architectures and generate index file and put them in "lomorage" directory which is ready to served via http/https/locally.
 
 ```
-root@OpenWrt:~# opkg install coreutils-stat perl-image-exiftool ffmpeg ffprobe lsblk
+./release_lomod.sh
+Found bin/targets/aarch64-3.10/generic-glibc/packages/fftw_3.3.10-1_aarch64-3.10.ipk
+Found bin/targets/mips-3.4/generic-glibc/packages/fftw_3.3.10-1_mips-3.4.ipk
+Found bin/targets/mipsel-3.4/generic-glibc/packages/fftw_3.3.10-1_mipsel-3.4.ipk
+...
+Found bin/targets/aarch64-3.10/generic-glibc/packages/lomo-backend_7f56dc2c-6_aarch64-3.10.ipk
+Found bin/targets/mips-3.4/generic-glibc/packages/lomo-backend_7f56dc2c-8_mips-3.4.ipk
+Found bin/targets/mipsel-3.4/generic-glibc/packages/lomo-backend_7f56dc2c-8_mipsel-3.4.ipk
 ```
+
+### 4. Installation on router
 
 Now you should get these files
 
