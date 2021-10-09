@@ -24,20 +24,25 @@ if [ -f "$config" ]; then
   ./scripts/feeds uninstall libwebp
   ./scripts/feeds install -p lomorage -f libwebp
 
-  make CONFIG_PACKAGE_libwebp=m package/libwebp/{clean,compile} -j `nproc` V=s
-  make CONFIG_PACKAGE_fftw=m package/fftw/{clean,compile} -j `nproc` V=s
-  make CONFIG_PACKAGE_libde265=m package/libde265/{clean,compile} -j `nproc` V=s
-  make CONFIG_PACKAGE_libheif=m package/libheif/{clean,compile} -j `nproc` V=s
-  make CONFIG_PACKAGE_libimagequant=m package/libimagequant/{clean,compile} -j `nproc` V=s
-  make CONFIG_PACKAGE_orc=m package/orc/{clean,compile} -j `nproc` V=s
-  make CONFIG_PACKAGE_vips=m package/vips/{clean,compile} -j `nproc` V=s
-  make CONFIG_PACKAGE_lomo-backend=m package/lomo-backend/{clean,compile} -j `nproc` V=s
+  for item in libwebp\
+              fftw \
+              libde265 \
+              libheif \
+              libimagequant \
+              orc \
+              vips \
+              lomo-backend
+    do
+      make CONFIG_PACKAGE_$item=m package/$item/clean
+      make CONFIG_PACKAGE_$item=m package/$item/compile -j `nproc` V=s
+    done
 
   # Free space (optional)
   #rm -rf build_dir/target-*
   #rm -rf build_dir/toolchain-*
 else
   for configfile in configs/*; do
-    echo "available config: $configfile"
+    arch=$(basename $configfile | awk -F. '{ print $1"."$2 }')
+    echo "available arch: $arch"
   done
 fi

@@ -42,6 +42,13 @@ root@OpenWrt:/mnt/sda1# lscpu | grep "Byte Order"
 Byte Order:          Big Endian
 ```
 
+And use `uname -a ` to check Linux version:
+
+```
+root@OpenWrt:/mnt/sda1# uname -a
+Linux OpenWrt 4.14.221 #0 Mon Feb 15 15:22:37 2021 mips GNU/Linux
+```
+
 Most likely you need mount USB drive and use that for packages installation, refer to:
 
 1. https://openwrt.org/docs/guide-user/storage/usb-drives-quickstart#procedure
@@ -57,13 +64,21 @@ root@OpenWrt:~# opkg install coreutils-stat perl-image-exiftool ffmpeg ffprobe l
 
 ### 2. Install Lomorage
 
-Add `src/gz lomorage https://lomostaging.lomorage.com/opkg` in `/opt/etc/opkg.conf`. This should **below "entware" entry** because some packages in entware are not compiled with needed flags, and need to be overrided.
+Architectures supported are:
+
+```
+aarch64-3.10    # arm64, linux kernel ver >= 3.10
+armv7-3.2       # armv7, linux kernel ver >=3.2
+mips-3.4        # mips big-endian, linux kernel ver >=3.2
+mipsel-3.4      # mips little-endian, linux kernel ver >=3.2
+```
+
+Add `src/gz lomorage https://lomostaging.lomorage.com/opkg/[architecture]` in `/opt/etc/opkg.conf`, replace `[architecture]` with those listed above, for example if it's mips big-endian, linux kernel ver >=3.2, use `src/gz lomorage https://lomostaging.lomorage.com/opkg/mips-3.4`. This should **below "entware" entry** because some packages in entware are not compiled with needed flags, and need to be overridden.
 
 ```
 root@OpenWrt:~# cat /opt/etc/opkg.conf
 src/gz entware http://bin.entware.net/mipssf-k3.4
-#src/gz local file:///mnt/sda1/lomorage
-src/gz lomorage https://lomostaging.lomorage.com/opkg
+src/gz lomorage https://lomostaging.lomorage.com/opkg/mips-3.4
 dest root /
 lists_dir ext /opt/var/opkg-lists
 arch all 100
@@ -85,7 +100,7 @@ root@OpenWrt:/mnt/sda1# /opt/etc/init.d/lomod
 Usage: /opt/etc/init.d/lomod {start|stop|restart}
 ```
 
-## Developement
+## Development
 
 This is for developers to compile opkg packages.
 
@@ -95,10 +110,11 @@ Entware uses the same infrastructure as OpenWRT to build.
 
 Install dependencies: https://openwrt.org/docs/guide-developer/build-system/install-buildsystem#debianubuntu
 
-Follow the instruction https://github.com/Entware/Entware/wiki/Compile-packages-from-sources till "Activate a supported platform configuration",  once you have the config, no need to `make menuconfig` in this step, you can then build the cross compile toolchain.
+Follow the instruction https://github.com/Entware/Entware/wiki/Compile-packages-from-sources till "Activate a supported platform configuration",  once you have the config, no need to `make menuconfig` in this step, you can then build the host tools and cross compile toolchain.
 
 ```
-make toolchain/install
+make -j `nproc` tools/install V=s
+make -j `nproc` toolchain/install V=s
 ```
 
 ### 2. Build Lomorage dependencies on host
@@ -151,7 +167,7 @@ Create tarball for all ipk files in above steps by running below command. `mips-
 
 A new tarball file `release-lomod_mips-3.4.tar.gz` is created. Copy this tarball from host to router to one directory, say "/mnt/sda1/lomorage", and untar it. 
 
-You can also use "release_lomod.sh" to generate opkg package repository, it will gather ipkg files in all architectures and generate index file and put them in "lomorage" directory which is ready to served via http/https/locally.
+You can also use "release_lomod.sh" to generate opkg package repository, it will gather ipkg files in all architectures, put them in "lomorage" directory  and generate manifest file. Then they are ready to served via http/https/locally.
 
 ```
 ./release_lomod.sh
@@ -229,8 +245,14 @@ https://openwrt.org/docs/guide-developer/build-system/use-patches-with-buildsyst
 
 https://github.com/Entware/entware-go
 
+https://github.com/mwarning/openwrt-examples
+
 https://openwrt.org/docs/guide-user/additional-software/opkg
 
 https://gist.github.com/bewest/3808646#packaging-a-service-for-openwrt
 
 https://github.com/mwarning/openwrt-examples/blob/master/README.md
+
+https://gist.github.com/chankruze/dee8c2ba31c338a60026e14e3383f981
+
+https://stackoverflow.com/questions/10814919/how-to-choose-target-and-other-features-in-openwrt-buildroot
