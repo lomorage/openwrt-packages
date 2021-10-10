@@ -31,6 +31,7 @@ if [ -f "$config" ]; then
               libimagequant \
               orc \
               vips \
+              lomo-web \
               lomo-backend
     do
       make CONFIG_PACKAGE_$item=m package/$item/clean

@@ -1,0 +1,35 @@
+#!/bin/sh
+
+PATH=/opt/bin:/opt/sbin:/sbin:/bin:/usr/sbin:/usr/bin
+APP=lomo-web
+PID_FILE="/opt/var/run/$APP.pid"
+
+START=80
+OPTS="--port 8001"
+
+start() {
+	start-stop-daemon -p $PID_FILE -m -b -S -x /usr/bin/env GOGC=50 $APP -- $OPTS
+}
+
+stop() {
+        start-stop-daemon -K -n $APP -p $PID_FILE -s TERM
+        rm -rf $PID_FILE
+}
+
+case "$1" in
+        start)
+                start
+                ;;
+        stop)
+                stop
+                ;;
+        restart)
+                stop
+                sleep 3
+                start
+                ;;
+        *)
+                echo "Usage: $0 {start|stop|restart}"
+                ;;
+esac
+

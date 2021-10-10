@@ -93,11 +93,24 @@ root@OpenWrt:/mnt/sda1/# opkg update
 root@OpenWrt:/mnt/sda1/# opkg install lomo-backend
 ```
 
-Lomod will start automatically after installation, you can also run:
+"lomod" will start automatically after installation, the mount directory is default to "/mnt" and port default to "8000", you can also run:
 
 ```
 root@OpenWrt:/mnt/sda1# /opt/etc/init.d/lomod
 Usage: /opt/etc/init.d/lomod {start|stop|restart}
+```
+
+You can also install Lomorage web client "lomo-web":
+
+```
+root@OpenWrt:/mnt/sda1/# opkg install lomo-web
+```
+
+"lomo-web" will start automatically after installation, the default port is "8001", you can also run:
+
+```
+root@OpenWrt:/mnt/sda1# /opt/etc/init.d/lomow
+Usage: /opt/etc/init.d/lomow {start|stop|restart}
 ```
 
 ## Development

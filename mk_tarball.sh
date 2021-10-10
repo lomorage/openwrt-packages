@@ -23,6 +23,7 @@ cp $pkg_dir/orc*.ipk $lomo_dir/
 cp $pkg_dir/vips*.ipk $lomo_dir/
 cp $pkg_dir/libwebp*.ipk $lomo_dir/
 cp $pkg_dir/lomo-backend*.ipk $lomo_dir/
+cp $pkg_dir/lomo-web*.ipk $lomo_dir/
 
 tarball=release-lomod_$arch.tar.gz
 
