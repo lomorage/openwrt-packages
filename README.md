@@ -113,6 +113,15 @@ root@OpenWrt:/mnt/sda1# /opt/etc/init.d/lomow
 Usage: /opt/etc/init.d/lomow {start|stop|restart}
 ```
 
+**Should be notice that for "arm" architecture, it will has two versions: "hf" and "nohf", "hf" means hard float, you can check whether the CPU supports hard float by `grep "fpu" /proc/cpuinfo` and if it shows `fpu     : yes` then it supports hard float. And if it doesn't support hard float ,you should install the following packages instead:**
+
+```
+root@OpenWrt:/mnt/sda1/# opkg install lomo-backend_nohf
+root@OpenWrt:/mnt/sda1/# opkg install lomo-web_nohf
+```
+
+
+
 ## Development
 
 This is for developers to compile opkg packages.
