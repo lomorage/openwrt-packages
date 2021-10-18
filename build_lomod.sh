@@ -38,6 +38,10 @@ if [ -f "$config" ]; then
       make CONFIG_PACKAGE_$item=m package/$item/compile -j `nproc` V=s
     done
 
+  if [[ $config == *"arm"* ]];then
+    make CONFIG_PACKAGE_lomo-backend_nohf=m package/lomo-backend/compile -j `nproc` V=s
+  fi
+
   # Free space (optional)
   #rm -rf build_dir/target-*
   #rm -rf build_dir/toolchain-*
