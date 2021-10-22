@@ -89,8 +89,8 @@ arch mips-3.4 160
 And then you can install "lomo-backend", all the dependencies should be able to be installed automatically:
 
 ```
-root@OpenWrt:/mnt/sda1/# opkg update
-root@OpenWrt:/mnt/sda1/# opkg install lomo-backend
+root@OpenWrt:/mnt/sda1/# opkg update --no-check-certificate
+root@OpenWrt:/mnt/sda1/# opkg install lomo-backend --no-check-certificate
 ```
 
 "lomod" will start automatically after installation, the mount directory is default to "/mnt" and port default to "8000", you can also run:
@@ -103,7 +103,7 @@ Usage: /opt/etc/init.d/lomod {start|stop|restart}
 You can also install Lomorage web client "lomo-web":
 
 ```
-root@OpenWrt:/mnt/sda1/# opkg install lomo-web
+root@OpenWrt:/mnt/sda1/# opkg install lomo-web --no-check-certificate
 ```
 
 "lomo-web" will start automatically after installation, the default port is "8001", you can also run:
@@ -116,8 +116,8 @@ Usage: /opt/etc/init.d/lomow {start|stop|restart}
 Should be notice that for "arm" architecture, it will has two versions: "hf" and "nohf", "hf" means hard float, you can check whether the CPU supports hard float by `grep "fpu" /proc/cpuinfo` and if it shows `fpu     : yes` then it supports hard float. **And if it doesn't support hard float, you should install the following packages instead:**
 
 ```
-root@OpenWrt:/mnt/sda1/# opkg install lomo-backend_nohf
-root@OpenWrt:/mnt/sda1/# opkg install lomo-web_nohf
+root@OpenWrt:/mnt/sda1/# opkg install lomo-backend_nohf --no-check-certificate
+root@OpenWrt:/mnt/sda1/# opkg install lomo-web_nohf --no-check-certificate
 ```
 
 Then you can add cron job to update lomo-backend and lomo-web at 4:00 am everyday:
@@ -129,7 +129,7 @@ root@OpenWrt:~# crontab -e
 and add the following item:
 
 ```
-0 4 * * * opkg update && opkg install lomo-backend lomo-web
+0 4 * * * opkg update --no-check-certificate && opkg install lomo-backend lomo-web --no-check-certificate
 ```
 
 ## Development
