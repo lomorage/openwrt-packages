@@ -64,7 +64,8 @@ define Package/lomo-web/postinst
 # check if we are on real system
 if [ -z "$${IPKG_INSTROOT}" ]; then
         echo "start lomow service"
-        /opt/etc/init.d/lomow start
+        /etc/init.d/lomow enable
+        /etc/init.d/lomow start
 fi
 exit 0
 endef
@@ -74,7 +75,8 @@ define Package/lomo-web/prerm
 # check if we are on real system
 if [ -z "$${IPKG_INSTROOT}" ]; then
         echo "stop lomow service"
-        /opt/etc/init.d/lomow stop
+        /etc/init.d/lomow stop
+        /etc/init.d/lomow disable
 fi
 exit 0
 endef
@@ -82,8 +84,8 @@ endef
 define Package/lomo-web/install
 	$(INSTALL_DIR) $(1)/opt/bin
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/lomo-web $(1)/opt/bin
-	$(INSTALL_DIR) $(1)/opt/etc/init.d
-	$(INSTALL_BIN) ./files/lomow $(1)/opt/etc/init.d
+	$(INSTALL_DIR) $(1)/etc/init.d
+	$(INSTALL_BIN) ./files/lomow $(1)/etc/init.d
 endef
 
 Package/lomo-web_nohf/install=$(Package/lomo-web/install)
