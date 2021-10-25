@@ -13,7 +13,7 @@ PKG_RELEASE:=$(AUTORELEASE)
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=git@bitbucket.org:lomoware/lomo-backend.git
-PKG_SOURCE_VERSION=67abe59415cf02ef70b3840e6a5df3dcd986cc10
+PKG_SOURCE_VERSION=86676e41e7f9fd2cfdd1755f34c89524b273f889
 
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/nls.mk
