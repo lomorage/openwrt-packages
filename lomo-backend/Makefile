@@ -54,7 +54,9 @@ define Build/Compile
         (\
                 echo $(PKG_BUILD_DIR); \
                 cd $(PKG_BUILD_DIR); \
-		cd cmd/lomod; \
+		cd handler; \
+		rice embed-go; \
+		cd ../cmd/lomod; \
 		GO111MODULE=auto CGO_LDFLAGS="$(TARGET_LDFLAGS)" CGO_CFLAGS_ALLOW="-Xpreprocessor" CGO_ENABLED=1 GOOS=linux GOARCH=$(GOARCH) $(GOARM) CC=$(TARGET_CC) CXX=$(TARGET_CXX) GOMIPS=softfloat $(GOROOT)/bin/go build -mod=vendor -ldflags "-s -w -v -X bitbucket.org/lomoware/lomo-backend/common/release.Version=$$(git rev-parse --short=12 HEAD) -extldflags \"$(TARGET_LDFLAGS)\"" -tags "sqlite_trace trace"; \
         )
 endef
