@@ -13,7 +13,8 @@ PKG_RELEASE:=$(AUTORELEASE)
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL:=git@bitbucket.org:lomoware/lomo-backend.git
-PKG_SOURCE_VERSION=520ac24b56fb28377eae35b1443a627bc822dbc0
+PKG_SOURCE_VERSION=fc08f540cd8e96de0afc55187c201d7945d87295
+SHORT_VERSION=$${$(PKG_SOURCE_VERSION):0:12}
 
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/nls.mk
@@ -57,7 +58,7 @@ define Build/Compile
 		cd handler; \
 		rice embed-go; \
 		cd ../cmd/lomod; \
-		GO111MODULE=auto CGO_LDFLAGS="$(TARGET_LDFLAGS)" CGO_CFLAGS_ALLOW="-Xpreprocessor" CGO_ENABLED=1 GOOS=linux GOARCH=$(GOARCH) $(GOARM) CC=$(TARGET_CC) CXX=$(TARGET_CXX) GOMIPS=softfloat $(GOROOT)/bin/go build -mod=vendor -ldflags "-s -w -v -X bitbucket.org/lomoware/lomo-backend/common/release.Version=$$(git rev-parse --short=12 HEAD) -extldflags \"$(TARGET_LDFLAGS)\"" -tags "sqlite_trace trace"; \
+		GO111MODULE=auto CGO_LDFLAGS="$(TARGET_LDFLAGS)" CGO_CFLAGS_ALLOW="-Xpreprocessor" CGO_ENABLED=1 GOOS=linux GOARCH=$(GOARCH) $(GOARM) CC=$(TARGET_CC) CXX=$(TARGET_CXX) GOMIPS=softfloat $(GOROOT)/bin/go build -mod=vendor -ldflags "-s -w -v -X bitbucket.org/lomoware/lomo-backend/common/release.Version=$(SHORT_VERSION) -extldflags \"$(TARGET_LDFLAGS)\"" -tags "sqlite_trace trace"; \
         )
 endef
 
