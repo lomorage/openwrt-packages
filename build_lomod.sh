@@ -31,7 +31,6 @@ if [ -f "$config" ]; then
               libimagequant \
               orc \
               vips \
-              lomo-web \
               lomo-backend
     do
       make CONFIG_PACKAGE_$item=m package/$item/clean
@@ -40,7 +39,6 @@ if [ -f "$config" ]; then
 
   if [[ $config == *"arm"* ]];then
     make CONFIG_PACKAGE_lomo-backend_nohf=m package/lomo-backend/compile -j `nproc` V=s
-    make CONFIG_PACKAGE_lomo-web_nohf=m package/lomo-web/compile -j `nproc` V=s
   fi
 
   # Free space (optional)

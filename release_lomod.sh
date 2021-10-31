@@ -11,7 +11,7 @@ for arch in bin/targets/*; do
     target=$lomo_dir/$archname
     mkdir $target
 
-    for ipkfile in $arch/generic-glibc/packages/*{fftw,orc,de265,heif,imagequant,webp,vips,lomo}*.ipk; do
+    for ipkfile in $arch/generic-glibc/packages/*{fftw,orc,de265,heif,imagequant,webp,vips,lomo-backend}*.ipk; do
         echo "Found $ipkfile"
         cp $ipkfile $target/
         cp configs/$archname.config .config
