@@ -73,12 +73,12 @@ mips-3.4        # mips big-endian, linux kernel ver >=3.2
 mipsel-3.4      # mips little-endian, linux kernel ver >=3.2
 ```
 
-Add `src/gz lomorage https://lomostaging.lomorage.com/opkg/[architecture]` in `/opt/etc/opkg.conf`, replace `[architecture]` with those listed above, for example if it's mips big-endian, linux kernel ver >=3.2, use `src/gz lomorage https://lomostaging.lomorage.com/opkg/mips-3.4`. This should **below "entware" entry** because some packages in entware are not compiled with needed flags, and need to be overridden.
+Add `src/gz lomorage https://lomoware.lomorage.com/opkg/[architecture]` in `/opt/etc/opkg.conf`, replace `[architecture]` with those listed above, for example if it's mips big-endian, linux kernel ver >=3.2, use `src/gz lomorage https://lomoware.lomorage.com/opkg/mips-3.4`. This should **below "entware" entry** because some packages in entware are not compiled with needed flags, and need to be overridden.
 
 ```
 root@OpenWrt:~# cat /opt/etc/opkg.conf
 src/gz entware http://bin.entware.net/mipssf-k3.4
-src/gz lomorage https://lomostaging.lomorage.com/opkg/mips-3.4
+src/gz lomorage https://lomoware.lomorage.com/opkg/mips-3.4
 dest root /
 lists_dir ext /opt/var/opkg-lists
 arch all 100
