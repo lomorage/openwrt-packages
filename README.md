@@ -2,6 +2,8 @@
 
 Lomorage setup using opkg packages with Entware repository (need dependencies in Entware, like ffmpeg exif-tools).
 
+**Please DO NOT try compile by yourselves, lomo-backend is not open source, so it will fail if you don't have the access.**
+
 ## Quick Start
 
 This is for users who want to setup Lomorage using opkg packets.
