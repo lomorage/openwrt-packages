@@ -54,7 +54,7 @@ Linux OpenWrt 4.14.221 #0 Mon Feb 15 15:22:37 2021 mips GNU/Linux
 Most likely you need mount USB drive and use that for packages installation, refer to:
 
 1. https://openwrt.org/docs/guide-user/storage/usb-drives-quickstart#procedure
-2. https://www.jianshu.com/p/4061eeaccd13
+2. https://web.archive.org/web/20210918221551/https://www.jianshu.com/p/4061eeaccd13
 
 **Make sure you change "/etc/profile" and add `/opt/bin/go/bin:/opt/bin` in `PATH` and `/opt/lib/` in `LD_LIBRARY_PATH`**
 
