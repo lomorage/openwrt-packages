@@ -33,6 +33,9 @@ define Package/libde265
   DEPENDS:=libstdcpp $(INTL_DEPENDS)
 endef
 
+CONFIGURE_ARGS += \
+        --disable-sherlock265 \
+
 define Build/InstallDev
 	$(INSTALL_DIR) $(1)/opt/include/libde265
 	$(CP) $(PKG_INSTALL_DIR)/opt/include/libde265/* $(1)/opt/include/libde265
