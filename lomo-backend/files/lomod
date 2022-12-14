@@ -6,7 +6,7 @@ USE_PROCD=1
 start_service() {
         procd_open_instance
         procd_set_param command /opt/bin/lomod --mount-dir /mnt -b /opt/lomorage --use-jpg --with-mount-mon
-        procd_set_param env GOGC=50
+        procd_set_param env GOGC=50 PATH="/opt/sbin:/opt/bin:/opt/bin/go/bin:/usr/sbin:/usr/bin:/sbin:/bin"
         procd_set_param respawn
         procd_close_instance
 }
